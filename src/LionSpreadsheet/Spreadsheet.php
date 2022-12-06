@@ -13,40 +13,40 @@ class Spreadsheet {
 
 	use Singleton;
 
-	private PHPSpreadsheet $spreadsheet;
-    private Worksheet $worksheet;
+	private static PHPSpreadsheet $spreadsheet;
+    private static Worksheet $worksheet;
 
-    private array $excel = [];
+    private static array $excel = [];
 
-    private function loadExcel(string $path, string $name = ""): void {
-        $this->spreadsheet = IOFactory::createReader('Xlsx')->load($path);
-        $this->worksheet = $name ===  ""
-        	? $this->spreadsheet->getActiveSheet()
-        	: $this->spreadsheet->getSheetByName($name);
+    private static function loadExcel(string $path, string $name = ""): void {
+        self::$spreadsheet = IOFactory::createReader('Xlsx')->load($path);
+        self::$worksheet = $name ===  ""
+        	? self::$spreadsheet->getActiveSheet()
+        	: self::$spreadsheet->getSheetByName($name);
     }
 
-    private function saveExcel(string $path): void {
-        IOFactory::createWriter($this->spreadsheet, "Xlsx")->save($path);
+    private static function saveExcel(string $path): void {
+        IOFactory::createWriter(self::$spreadsheet, "Xlsx")->save($path);
     }
 
-    private function changeWorksheet(string $name): void {
-        $this->worksheet = $this->spreadsheet->getSheetByName($name);
+    private static function changeWorksheet(string $name): void {
+        self::$worksheet = self::$spreadsheet->getSheetByName($name);
     }
 
-    private function getCell(string $column): ?string {
-        return $this->worksheet->getCell($column)->getValue();
+    private static function getCell(string $column): ?string {
+        return self::$worksheet->getCell($column)->getValue();
     }
 
-    private function setCell(string $column, mixed $value): void {
-        $this->worksheet->setCellValue($column, $value);
+    private static function setCell(string $column, mixed $value): void {
+        self::$worksheet->setCellValue($column, $value);
     }
 
-    private function addAlignmentHorizontal(string $columns, string $alignment) {
-        $this->worksheet->getStyle($columns)->getAlignment()->setHorizontal($alignment);
+    private static function addAlignmentHorizontal(string $columns, string $alignment) {
+        self::$worksheet->getStyle($columns)->getAlignment()->setHorizontal($alignment);
     }
 
-    private function addBorder(string $columns, string $style, string $color): void {
-        $this->worksheet
+    private static function addBorder(string $columns, string $style, string $color): void {
+        self::$worksheet
             ->getStyle($columns)
             ->getBorders()
             ->getOutline()
@@ -54,21 +54,21 @@ class Spreadsheet {
             ->setColor(new Color($color));
     }
 
-    private function addBold(string $columns): void {
-        $this->worksheet->getStyle($columns)->getFont()->setBold(true);
+    private static function addBold(string $columns): void {
+        self::$worksheet->getStyle($columns)->getFont()->setBold(true);
     }
 
-    private function addColor(string $columns, string $color): void {
-        $this->worksheet
+    private static function addColor(string $columns, string $color): void {
+        self::$worksheet
             ->getStyle($columns)
             ->getFont()
             ->getColor()
             ->setARGB($color);
     }
 
-    private function addDataValidation(array $columns, array $config): void {
+    private static function addDataValidation(array $columns, array $config): void {
         foreach ($columns as $key => $column) {
-            $validation = $this->worksheet->getCell($column)->getDataValidation();
+            $validation = self::$worksheet->getCell($column)->getDataValidation();
             $validation->setType(DataValidation::TYPE_LIST);
             $validation->setErrorStyle(DataValidation::STYLE_INFORMATION);
             $validation->setAllowBlank(false);
