@@ -1,0 +1,21 @@
+{
+    "name": "lion/spreadsheet",
+    "description": "Library to facilitate the use of spreadsheet",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "LionSpreadsheet\\": "src/LionSpreadsheet/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Sergio León",
+            "email": "sergioleon4004@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.1",
+        "phpoffice/phpspreadsheet": "^1.25"
+    }
+}
