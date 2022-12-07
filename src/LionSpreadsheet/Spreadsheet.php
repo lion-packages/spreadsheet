@@ -18,34 +18,34 @@ class Spreadsheet {
 
     private static array $excel = [];
 
-    private static function loadExcel(string $path, string $name = ""): void {
+    public static function loadExcel(string $path, string $name = ""): void {
         self::$spreadsheet = IOFactory::createReader('Xlsx')->load($path);
         self::$worksheet = $name ===  ""
         	? self::$spreadsheet->getActiveSheet()
         	: self::$spreadsheet->getSheetByName($name);
     }
 
-    private static function saveExcel(string $path): void {
+    public static function saveExcel(string $path): void {
         IOFactory::createWriter(self::$spreadsheet, "Xlsx")->save($path);
     }
 
-    private static function changeWorksheet(string $name): void {
+    public static function changeWorksheet(string $name): void {
         self::$worksheet = self::$spreadsheet->getSheetByName($name);
     }
 
-    private static function getCell(string $column): ?string {
+    public static function getCell(string $column): ?string {
         return self::$worksheet->getCell($column)->getValue();
     }
 
-    private static function setCell(string $column, mixed $value): void {
+    public static function setCell(string $column, mixed $value): void {
         self::$worksheet->setCellValue($column, $value);
     }
 
-    private static function addAlignmentHorizontal(string $columns, string $alignment) {
+    public static function addAlignmentHorizontal(string $columns, string $alignment) {
         self::$worksheet->getStyle($columns)->getAlignment()->setHorizontal($alignment);
     }
 
-    private static function addBorder(string $columns, string $style, string $color): void {
+    public static function addBorder(string $columns, string $style, string $color): void {
         self::$worksheet
             ->getStyle($columns)
             ->getBorders()
@@ -54,11 +54,11 @@ class Spreadsheet {
             ->setColor(new Color($color));
     }
 
-    private static function addBold(string $columns): void {
+    public static function addBold(string $columns): void {
         self::$worksheet->getStyle($columns)->getFont()->setBold(true);
     }
 
-    private static function addColor(string $columns, string $color): void {
+    public static function addColor(string $columns, string $color): void {
         self::$worksheet
             ->getStyle($columns)
             ->getFont()
@@ -66,7 +66,7 @@ class Spreadsheet {
             ->setARGB($color);
     }
 
-    private static function addDataValidation(array $columns, array $config): void {
+    public static function addDataValidation(array $columns, array $config): void {
         foreach ($columns as $key => $column) {
             $validation = self::$worksheet->getCell($column)->getDataValidation();
             $validation->setType(DataValidation::TYPE_LIST);
