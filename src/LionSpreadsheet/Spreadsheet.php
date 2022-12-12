@@ -67,9 +67,9 @@ class Spreadsheet {
             ->setARGB($color);
     }
 
-    public static function addBackground(string $column, string $color, ?string $type_color = Fill::FILL_SOLID): void {
+    public static function addBackground(string $columns, string $color, ?string $type_color = Fill::FILL_SOLID): void {
 		self::$worksheet
-            ->getStyle($column)
+            ->getStyle($columns)
             ->getFill()
             ->setFillType($type_color)
             ->getStartColor()
