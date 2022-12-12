@@ -7,6 +7,7 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PHPSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Color;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
 class Spreadsheet {
@@ -65,6 +66,15 @@ class Spreadsheet {
             ->getColor()
             ->setARGB($color);
     }
+
+    public static function background(string $column, string $color, ?string $type_color = Fill::FILL_SOLID): void {
+		self::$worksheet
+            ->getStyle($column)
+            ->getFill()
+            ->setFillType($type_color)
+            ->getStartColor()
+            ->setARGB($color);
+	}
 
     public static function addDataValidation(array $columns, array $config): void {
         foreach ($columns as $key => $column) {
