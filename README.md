@@ -18,7 +18,7 @@
 ## Install
 
 ```shell
-composer create-project lion/spreadsheet
+composer require lion/spreadsheet
 ```
 
 ## License
