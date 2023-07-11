@@ -19,15 +19,23 @@ class Spreadsheet {
 
     private static array $excel = [];
 
-    public static function loadExcel(string $path, string $name = ""): void {
+    public static function load(string $path, string $name = ""): void {
         self::$spreadsheet = IOFactory::createReader('Xlsx')->load($path);
         self::$worksheet = $name ===  ""
         	? self::$spreadsheet->getActiveSheet()
         	: self::$spreadsheet->getSheetByName($name);
     }
 
-    public static function saveExcel(string $path): void {
+    public static function save(string $path): void {
         IOFactory::createWriter(self::$spreadsheet, "Xlsx")->save($path);
+    }
+
+    public static function download(string $path, string $file_name): void {
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename=' . $file_name);
+        header('Content-Length: ' . filesize($path . $file_name));
+        readfile($path . $file_name);
+        unlink($path . $file_name);
     }
 
     public static function changeWorksheet(string $name): void {
