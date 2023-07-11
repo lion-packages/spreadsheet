@@ -23,4 +23,4 @@ composer require lion/spreadsheet
 
 ## License
 
-The Lion-Spreadsheet is open-sourced software licensed under the [MIT License](https://github.com/Sleon4/Lion-Spreadsheet/blob/main/LICENSE).
+The spreadsheet is open-sourced software licensed under the [MIT License](https://github.com/lion-packages/spreadsheet/blob/main/LICENSE).
