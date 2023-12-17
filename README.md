@@ -17,7 +17,7 @@
 
 ## Install
 
-```shell
+```bash
 composer require lion/spreadsheet
 ```
 
