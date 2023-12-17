@@ -1,4 +1,2 @@
 /vendor/
-/storage/
-.env
-index.php
+.phpunit.result.cache

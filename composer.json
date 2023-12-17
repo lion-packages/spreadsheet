@@ -1,6 +1,6 @@
 {
     "name": "lion/spreadsheet",
-    "description": "Library to facilitate the use of spreadsheet",
+    "description": "library to facilitate the use of spreadsheet",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -8,8 +8,17 @@
             "LionSpreadsheet\\": "src/LionSpreadsheet/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "phpoffice/phpspreadsheet": "^1.25"
+    },
+    "require-dev": {
+        "lion/test": "^1.1",
+        "phpunit/phpunit": "^10.5"
     }
 }
