@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests;
 
 use Exception;
-use LionSpreadsheet\Spreadsheet;
-use LionTest\Test;
+use Lion\Spreadsheet\Spreadsheet;
+use Lion\Test\Test;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use Tests\Provider\SpreadsheetProviderTrait;
