@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Provider;
 
-use LionSpreadsheet\Spreadsheet;
+use Lion\Spreadsheet\Spreadsheet;
 
 trait SpreadsheetProviderTrait
 {

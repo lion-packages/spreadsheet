@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace LionSpreadsheet;
+namespace Lion\Spreadsheet;
 
 use Exception;
 use PhpOffice\PhpSpreadsheet\IOFactory;
