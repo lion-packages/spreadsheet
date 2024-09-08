@@ -9,25 +9,27 @@ use Lion\Spreadsheet\Spreadsheet;
 use Lion\Test\Test;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test as Testing;
 use Tests\Provider\SpreadsheetProviderTrait;
 
 class SpreadsheetTest extends Test
 {
     use SpreadsheetProviderTrait;
 
-    const SAVE_PATH = './storage/';
-    const SUPPORT_PATH = './tests/support-files/';
-    const FILE_NAME = 'template.xlsx';
-    const FILE_NAME_MULTIPLE_SHEETS = 'template-multiple-sheets.xlsx';
-    const FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION = 'template-multiple-sheets-data-validation.xlsx';
-    const FILE_PATH = self::SUPPORT_PATH . self::FILE_NAME;
-    const FILE_PATH_MULTIPLE_SHEETS = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS;
-    const FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION;
-    const FILE_TYPE = 'fileType';
-    const SPREADSHEET = 'spreadsheet';
-    const WORKSHEET = 'worksheet';
-    const CONTENT_TYPE = 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    const CONTENT_DISPOSITION = 'Content-Disposition: attachment; filename=' . self::FILE_NAME;
+    private const string SAVE_PATH = './storage/';
+    private const string SUPPORT_PATH = './tests/support-files/';
+    private const string FILE_NAME = 'template.xlsx';
+    private const string FILE_NAME_MULTIPLE_SHEETS = 'template-multiple-sheets.xlsx';
+    private const string FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION = 'template-multiple-sheets-data-validation.xlsx';
+    private const string FILE_PATH = self::SUPPORT_PATH . self::FILE_NAME;
+    private const string FILE_PATH_MULTIPLE_SHEETS = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS;
+    private const string FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION;
+    private const string FILE_TYPE = 'fileType';
+    private const string SPREADSHEET = 'spreadsheet';
+    private const string WORKSHEET = 'worksheet';
+    private const string CONTENT_TYPE = 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+    private const string CONTENT_DISPOSITION = 'Content-Disposition: attachment; filename=' . self::FILE_NAME;
 
     protected function setUp(): void
     {
@@ -42,14 +44,17 @@ class SpreadsheetTest extends Test
     private function saveFile(Spreadsheet $spreadsheet, string $fileName): void
     {
         $fileName = $fileName . '-' . self::FILE_NAME;
+
         $spreadsheet->save(self::SAVE_PATH . $fileName);
 
         $this->assertFileExists(self::SAVE_PATH . $fileName);
     }
 
-    public function testConstruct(): void
+    #[Testing]
+    public function construct(): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH);
+
         $this->initReflection($spreadsheet);
 
         $this->assertSame(Spreadsheet::XLSX, $this->getPrivateProperty(self::FILE_TYPE));
@@ -59,34 +64,40 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testConstruct-', true));
     }
 
-    public function testSave(): void
+    #[Testing]
+    public function save(): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH);
+
         $spreadsheet->save(self::SAVE_PATH . self::FILE_NAME);
 
         $this->assertFileExists(self::SAVE_PATH . self::FILE_NAME);
         $this->saveFile($spreadsheet, uniqid('testSave-', true));
     }
 
-    public function testDownload(): void
+    #[Testing]
+    public function download(): void
     {
         $fileName = 'testDownload-' . self::FILE_NAME;
+
         $spreadsheet = new Spreadsheet(self::FILE_PATH);
+
         $spreadsheet->save(self::SAVE_PATH . $fileName);
 
         $this->assertFileExists(self::SAVE_PATH . $fileName);
 
         ob_start();
+
         $spreadsheet->download(self::SAVE_PATH, $fileName);
+
         ob_end_clean();
 
         $this->assertFileDoesNotExist(self::SAVE_PATH . $fileName);
     }
 
-    /**
-     * @dataProvider changeWorksheetProvider
-     * */
-    public function testGetSheetName(string $fromSheet): void
+    #[Testing]
+    #[DataProvider('changeWorksheetProvider')]
+    public function getSheetName(string $fromSheet, string $toSheet, string $value, string $column): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $fromSheet);
 
@@ -95,12 +106,12 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetSheetName-', true));
     }
 
-    /**
-     * @dataProvider changeWorksheetProvider
-     * */
-    public function testChangeWorksheet(string $fromSheet, string $toSheet, string $value, string $column): void
+    #[Testing]
+    #[DataProvider('changeWorksheetProvider')]
+    public function changeWorksheet(string $fromSheet, string $toSheet, string $value, string $column): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $fromSheet);
+
         $this->initReflection($spreadsheet);
 
         $spreadsheet->setCell($column, $value);
@@ -119,10 +130,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testChangeWorksheet-', true));
     }
 
-    /**
-     * @dataProvider getCellProvider
-     * */
-    public function testGetCell(string $sheetName, array $cells): void
+    #[Testing]
+    #[DataProvider('getCellProvider')]
+    public function getCell(string $sheetName, array $cells): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
@@ -133,10 +143,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetCell-', true));
     }
 
-    /**
-     * @dataProvider setCellProvider
-     * */
-    public function testSetCell(string $sheetName, array $cells): void
+    #[Testing]
+    #[DataProvider('setCellProvider')]
+    public function setCell(string $sheetName, array $cells): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
@@ -149,10 +158,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testSetCell-', true));
     }
 
-    /**
-     * @dataProvider addAlignmentHorizontalProvider
-     * */
-    public function testAddAlignmentHorizontal(string $sheetName, array $cells): void
+    #[Testing]
+    #[DataProvider('addAlignmentHorizontalProvider')]
+    public function addAlignmentHorizontal(string $sheetName, array $cells): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
@@ -169,10 +177,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddAlignmentHorizontal-', true));
     }
 
-    /**
-     * @dataProvider addAlignmentHorizontalProvider
-     * */
-    public function testGetAlignmentHorizontal(string $sheetName, array $cells): void
+    #[Testing]
+    #[DataProvider('addAlignmentHorizontalProvider')]
+    public function getAlignmentHorizontal(string $sheetName, array $cells): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
@@ -189,10 +196,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetAlignmentHorizontal-', true));
     }
 
-    /**
-     * @dataProvider addBorderProvider
-     * */
-    public function testAddBorder(array $sheets, array $rows): void
+    #[Testing]
+    #[DataProvider('addBorderProvider')]
+    public function addBorder(array $sheets, array $rows): void
     {
         foreach ($sheets as $sheet => $color) {
             $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheet);
@@ -209,12 +215,12 @@ class SpreadsheetTest extends Test
         }
     }
 
-    /**
-     * @dataProvider addBoldProvider
-     * */
-    public function testAddBold(string $sheetName, string $group, array $cells, string $value): void
+    #[Testing]
+    #[DataProvider('addBoldProvider')]
+    public function addBold(string $sheetName, string $group, array $cells, string $value): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
+
         $this->initReflection($spreadsheet);
 
         foreach ($cells as $cell) {
@@ -229,12 +235,12 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddBold-', true));
     }
 
-    /**
-     * @dataProvider addColorProvider
-     * */
-    public function testAddColor(string $sheetName, string $group, array $cells, string $value, string $color): void
+    #[Testing]
+    #[DataProvider('addColorProvider')]
+    public function addColor(string $sheetName, string $group, array $cells, string $value, string $color): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
+
         $this->initReflection($spreadsheet);
 
         foreach ($cells as $cell) {
@@ -252,13 +258,13 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddColor-', true));
     }
 
-    /**
-     * @dataProvider addBackgroundProvider
-     * */
-    public function testAddBackground(array $sheets, array $rows): void
+    #[Testing]
+    #[DataProvider('addBackgroundProvider')]
+    public function addBackground(array $sheets, array $rows): void
     {
         foreach ($sheets as $sheet) {
             $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheet);
+
             $this->initReflection($spreadsheet);
 
             foreach ($rows as $row) {
@@ -286,12 +292,16 @@ class SpreadsheetTest extends Test
     }
 
     /**
-     * @dataProvider addDataValidationProvider
-     * */
-    public function testAddDataValidation(string $sheetName, string $color, array $data): void
+     * @throws Exception
+     */
+    #[Testing]
+    #[DataProvider('addDataValidationProvider')]
+    public function addDataValidation(string $sheetName, string $color, array $data): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION, $sheetName);
+
         $spreadsheet->addDataValidation($data);
+
         $this->initReflection($spreadsheet);
 
         /** @var Worksheet $worksheet */
@@ -305,15 +315,15 @@ class SpreadsheetTest extends Test
         }
 
         $spreadsheet->changeWorksheet($data['config']['worksheet']);
+
         $spreadsheet->addColor("{$data['config']['column']}{$data['config']['start']}", $color);
 
         $this->saveFile($spreadsheet, uniqid('testAddDataValidation-', true));
     }
 
-    /**
-     * @dataProvider addDataValidationWithErrorsProvider
-     * */
-    public function testAddDataValidationWithErrors(array $data): void
+    #[Testing]
+    #[DataProvider('addDataValidationWithErrorsProvider')]
+    public function addDataValidationWithErrors(array $data): void
     {
         $this->expectException(Exception::class);
 
