@@ -1,4 +1,3 @@
-version: "3.8"
 services:
     app:
         container_name: spreadsheet-app
@@ -12,4 +11,3 @@ services:
 networks:
     lion:
         driver: bridge
-        
