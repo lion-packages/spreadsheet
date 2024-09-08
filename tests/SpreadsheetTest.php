@@ -7,6 +7,7 @@ namespace Tests;
 use Exception;
 use Lion\Spreadsheet\Spreadsheet;
 use Lion\Test\Test;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -114,18 +115,13 @@ class SpreadsheetTest extends Test
 
         $this->initReflection($spreadsheet);
 
-        $spreadsheet->setCell($column, $value);
-
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($column, $value));
         $this->assertSame($value, $spreadsheet->getCell($column));
         $this->assertSame($fromSheet, $spreadsheet->getSheetName());
-
-        $spreadsheet->changeWorksheet($toSheet);
-
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->changeWorksheet($toSheet));
         $this->assertSame($toSheet, $spreadsheet->getSheetName());
         $this->assertInstanceOf(Worksheet::class, $this->getPrivateProperty(self::WORKSHEET));
-
-        $spreadsheet->setCell($column, $value);
-
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($column, $value));
         $this->assertSame($value, $spreadsheet->getCell($column));
         $this->saveFile($spreadsheet, uniqid('testChangeWorksheet-', true));
     }
@@ -150,7 +146,7 @@ class SpreadsheetTest extends Test
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
         foreach ($cells as $column => $value) {
-            $spreadsheet->setCell($column, $value);
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($column, $value));
 
             $this->assertSame($value, $spreadsheet->getCell($column));
         }
@@ -165,12 +161,9 @@ class SpreadsheetTest extends Test
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
         foreach ($cells as $column => $alignment) {
-            $spreadsheet->setCell($column, $alignment);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($column, $alignment));
             $this->assertSame($alignment, $spreadsheet->getCell($column));
-
-            $spreadsheet->addAlignmentHorizontal($column, $alignment);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->addAlignmentHorizontal($column, $alignment));
             $this->assertSame($alignment, $spreadsheet->getAlignmentHorizontal($column));
         }
 
@@ -184,12 +177,9 @@ class SpreadsheetTest extends Test
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheetName);
 
         foreach ($cells as $column => $alignment) {
-            $spreadsheet->setCell($column, $alignment);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($column, $alignment));
             $this->assertSame($alignment, $spreadsheet->getCell($column));
-
-            $spreadsheet->addAlignmentHorizontal($column, $alignment);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->addAlignmentHorizontal($column, $alignment));
             $this->assertSame($alignment, $spreadsheet->getAlignmentHorizontal($column));
         }
 
@@ -204,11 +194,13 @@ class SpreadsheetTest extends Test
             $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheet);
 
             foreach ($rows as $row) {
-                $spreadsheet->setCell($row['column'], $row['value']);
-
+                $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($row['column'], $row['value']));
                 $this->assertSame($row['value'], $spreadsheet->getCell($row['column']));
 
-                $spreadsheet->addBorder($row['cells'], $row['border'], $color);
+                $this->assertInstanceOf(
+                    Spreadsheet::class,
+                    $spreadsheet->addBorder($row['cells'], $row['border'], $color)
+                );
             }
 
             $this->saveFile($spreadsheet, uniqid('testAddBorder-', true));
@@ -224,8 +216,7 @@ class SpreadsheetTest extends Test
         $this->initReflection($spreadsheet);
 
         foreach ($cells as $cell) {
-            $spreadsheet->setCell($cell, $value);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($cell, $value));
             $this->assertSame($value, $spreadsheet->getCell($cell));
         }
 
@@ -244,12 +235,11 @@ class SpreadsheetTest extends Test
         $this->initReflection($spreadsheet);
 
         foreach ($cells as $cell) {
-            $spreadsheet->setCell($cell, $value);
-
+            $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($cell, $value));
             $this->assertSame($value, $spreadsheet->getCell($cell));
         }
 
-        $spreadsheet->addColor($group, $color);
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->addColor($group, $color));
 
         /** @var Worksheet $worksheet */
         $worksheet = $this->getPrivateProperty(self::WORKSHEET);
@@ -269,8 +259,7 @@ class SpreadsheetTest extends Test
 
             foreach ($rows as $row) {
                 foreach ($row['cells'] as $cell) {
-                    $spreadsheet->setCell($cell, $row['value']);
-
+                    $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->setCell($cell, $row['value']));
                     $this->assertSame($row['value'], $spreadsheet->getCell($cell));
                 }
 
@@ -310,22 +299,27 @@ class SpreadsheetTest extends Test
         foreach ($data['columns'] as $column) {
             $validation = $worksheet->getCell($column)->getDataValidation();
 
-            $this->assertSame(Spreadsheet::TYPE_LIST, $validation->getType());
-            $this->assertSame(Spreadsheet::STYLE_INFORMATION, $validation->getErrorStyle());
+            $this->assertSame(DataValidation::TYPE_LIST, $validation->getType());
+            $this->assertSame(DataValidation::STYLE_INFORMATION, $validation->getErrorStyle());
         }
 
-        $spreadsheet->changeWorksheet($data['config']['worksheet']);
+        $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->changeWorksheet($data['config']['worksheet']));
 
-        $spreadsheet->addColor("{$data['config']['column']}{$data['config']['start']}", $color);
+        $this->assertInstanceOf(
+            Spreadsheet::class,
+            $spreadsheet->addColor("{$data['config']['column']}{$data['config']['start']}", $color)
+        );
 
         $this->saveFile($spreadsheet, uniqid('testAddDataValidation-', true));
     }
 
     #[Testing]
     #[DataProvider('addDataValidationWithErrorsProvider')]
-    public function addDataValidationWithErrors(array $data): void
+    public function addDataValidationWithErrors(array $data, string $exceptionMessage): void
     {
         $this->expectException(Exception::class);
+        $this->expectExceptionMessage($exceptionMessage);
+        $this->expectExceptionCode(500);
 
         (new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION))->addDataValidation($data);
     }
