@@ -9,16 +9,16 @@
 </p>
 
 <p align="center">
-  <img src="http://poser.pugx.org/lion/spreadsheet/v" alt="Latest Stable Version">
-  <img src="http://poser.pugx.org/lion/spreadsheet/downloads" alt="Total Downloads">
-  <img src="http://poser.pugx.org/lion/spreadsheet/license" alt="License">
-  <img src="http://poser.pugx.org/lion/spreadsheet/require/php" alt="PHP Version Require">
+  <img src="https://poser.pugx.org/lion/spreadsheet/v" alt="Latest Stable Version">
+  <img src="https://poser.pugx.org/lion/spreadsheet/downloads" alt="Total Downloads">
+  <img src="https://poser.pugx.org/lion/spreadsheet/license" alt="License">
+  <img src="https://poser.pugx.org/lion/spreadsheet/require/php" alt="PHP Version Require">
 </p>
 
 ## Install
 
 ```bash
-composer require lion/spreadsheet
+composer require phpoffice/phpspreadsheet lion/spreadsheet
 ```
 
 ## License
