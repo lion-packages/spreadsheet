@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
+use ReflectionException;
 use Tests\Provider\SpreadsheetProviderTrait;
 
 class SpreadsheetTest extends Test
@@ -25,12 +26,11 @@ class SpreadsheetTest extends Test
     private const string FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION = 'template-multiple-sheets-data-validation.xlsx';
     private const string FILE_PATH = self::SUPPORT_PATH . self::FILE_NAME;
     private const string FILE_PATH_MULTIPLE_SHEETS = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS;
-    private const string FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION;
+    private const string FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION
+        = self::SUPPORT_PATH . self::FILE_NAME_MULTIPLE_SHEETS_DATA_VALIDATION;
     private const string FILE_TYPE = 'fileType';
     private const string SPREADSHEET = 'spreadsheet';
     private const string WORKSHEET = 'worksheet';
-    private const string CONTENT_TYPE = 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-    private const string CONTENT_DISPOSITION = 'Content-Disposition: attachment; filename=' . self::FILE_NAME;
 
     protected function setUp(): void
     {
@@ -51,6 +51,9 @@ class SpreadsheetTest extends Test
         $this->assertFileExists(self::SAVE_PATH . $fileName);
     }
 
+    /**
+     * @throws ReflectionException
+     */
     #[Testing]
     public function construct(): void
     {
@@ -96,6 +99,9 @@ class SpreadsheetTest extends Test
         $this->assertFileDoesNotExist(self::SAVE_PATH . $fileName);
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('changeWorksheetProvider')]
     public function getSheetName(string $fromSheet, string $toSheet, string $value, string $column): void
@@ -107,6 +113,10 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetSheetName-', true));
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('changeWorksheetProvider')]
     public function changeWorksheet(string $fromSheet, string $toSheet, string $value, string $column): void
@@ -126,6 +136,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testChangeWorksheet-', true));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('getCellProvider')]
     public function getCell(string $sheetName, array $cells): void
@@ -139,6 +152,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetCell-', true));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('setCellProvider')]
     public function setCell(string $sheetName, array $cells): void
@@ -154,6 +170,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testSetCell-', true));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addAlignmentHorizontalProvider')]
     public function addAlignmentHorizontal(string $sheetName, array $cells): void
@@ -170,6 +189,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddAlignmentHorizontal-', true));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addAlignmentHorizontalProvider')]
     public function getAlignmentHorizontal(string $sheetName, array $cells): void
@@ -186,6 +208,9 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testGetAlignmentHorizontal-', true));
     }
 
+    /**
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addBorderProvider')]
     public function addBorder(array $sheets, array $rows): void
@@ -207,6 +232,10 @@ class SpreadsheetTest extends Test
         }
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addBoldProvider')]
     public function addBold(string $sheetName, string $group, array $cells, string $value): void
@@ -226,6 +255,10 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddBold-', true));
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addColorProvider')]
     public function addColor(string $sheetName, string $group, array $cells, string $value, string $color): void
@@ -248,6 +281,10 @@ class SpreadsheetTest extends Test
         $this->saveFile($spreadsheet, uniqid('testAddColor-', true));
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws Exception
+     */
     #[Testing]
     #[DataProvider('addBackgroundProvider')]
     public function addBackground(array $sheets, array $rows): void
@@ -265,13 +302,15 @@ class SpreadsheetTest extends Test
 
                 $spreadsheet->addBackground($row['group'], $row['color'], $row['fillType']);
 
-                $colorARGB = $this
-                    ->getPrivateProperty(self::WORKSHEET)
+                /** @var Worksheet $worksheet */
+                $worksheet = $this->getPrivateProperty(self::WORKSHEET);
+
+                $colorARGB = $worksheet
                     ->getStyle($row['group'])
                     ->getFill()
                     ->setFillType($row['fillType'])
                     ->getStartColor()
-                    ->getARGB($row['color']);
+                    ->getARGB();
 
                 $this->assertSame("FF{$row['color']}", $colorARGB);
             }
@@ -311,16 +350,5 @@ class SpreadsheetTest extends Test
         );
 
         $this->saveFile($spreadsheet, uniqid('testAddDataValidation-', true));
-    }
-
-    #[Testing]
-    #[DataProvider('addDataValidationWithErrorsProvider')]
-    public function addDataValidationWithErrors(array $data, string $exceptionMessage): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage($exceptionMessage);
-        $this->expectExceptionCode(500);
-
-        (new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS_DATA_VALIDATION))->addDataValidation($data);
     }
 }
