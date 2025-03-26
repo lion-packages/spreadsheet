@@ -16,10 +16,6 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 /**
  * Helps streamline Spreadsheet processes more easily
  *
- * @property PHPSpreadsheet $spreadsheet [Spreadsheet class object]
- * @property Worksheet $worksheet [Worksheet class object]
- * @property string $fileType [File type]
- *
  * @package Lion\Spreadsheet
  */
 class Spreadsheet
@@ -36,7 +32,7 @@ class Spreadsheet
      *
      * @var PHPSpreadsheet $spreadsheet
      */
-	private PHPSpreadsheet $spreadsheet;
+    private PHPSpreadsheet $spreadsheet;
 
     /**
      * [Worksheet class object]
@@ -57,6 +53,8 @@ class Spreadsheet
      *
      * @param string $path [File path]
      * @param string $sheetName [Sheet name]
+     *
+     * @throws Exception [If the worksheet does not exist]
      */
     public function __construct(string $path, string $sheetName = '')
     {
@@ -80,7 +78,8 @@ class Spreadsheet
      */
     public function save(string $path): void
     {
-        IOFactory::createWriter($this->spreadsheet, $this->fileType)->save($path);
+        IOFactory::createWriter($this->spreadsheet, $this->fileType)
+            ->save($path);
     }
 
     /**
@@ -111,7 +110,9 @@ class Spreadsheet
      */
     public function getSheetName(): string
     {
-        return $this->spreadsheet->getActiveSheet()->getTitle();
+        return $this->spreadsheet
+            ->getActiveSheet()
+            ->getTitle();
     }
 
     /**
@@ -120,12 +121,20 @@ class Spreadsheet
      * @param string $sheetName [Sheet name]
      *
      * @return Spreadsheet
+     *
+     * @throws Exception [If the worksheet does not exist]
      */
     public function changeWorksheet(string $sheetName): Spreadsheet
     {
         $this->spreadsheet->setActiveSheetIndexByName($sheetName);
 
-        $this->worksheet = $this->spreadsheet->getSheetByName($sheetName);
+        $worksheet = $this->spreadsheet->getSheetByName($sheetName);
+
+        if (!$worksheet) {
+            throw new Exception("Worksheet not found");
+        }
+
+        $this->worksheet = $worksheet;
 
         return $this;
     }
@@ -139,7 +148,9 @@ class Spreadsheet
      */
     public function getCell(string $columns): mixed
     {
-        return $this->worksheet->getCell($columns)->getValue();
+        return $this->worksheet
+            ->getCell($columns)
+            ->getValue();
     }
 
     /**
@@ -167,7 +178,10 @@ class Spreadsheet
      */
     public function addAlignmentHorizontal(string $columns, string $alignment): Spreadsheet
     {
-        $this->worksheet->getStyle($columns)->getAlignment()->setHorizontal($alignment);
+        $this->worksheet
+            ->getStyle($columns)
+            ->getAlignment()
+            ->setHorizontal($alignment);
 
         return $this;
     }
@@ -181,7 +195,10 @@ class Spreadsheet
      */
     public function getAlignmentHorizontal(string $column): ?string
     {
-        return $this->worksheet->getStyle($column)->getAlignment()->getHorizontal();
+        return $this->worksheet
+            ->getStyle($column)
+            ->getAlignment()
+            ->getHorizontal();
     }
 
     /**
@@ -193,11 +210,19 @@ class Spreadsheet
      *
      * @return Spreadsheet
      */
-    public function addBorder(string $columns, string $style = Border::BORDER_THIN, string $color = 'FF0000'): Spreadsheet
-    {
+    public function addBorder(
+        string $columns,
+        string $style = Border::BORDER_THIN,
+        string $color = 'FF0000'
+    ): Spreadsheet {
         $newColor = new Color($color);
 
-        $this->worksheet->getStyle($columns)->getBorders()->getOutline()->setBorderStyle($style)->setColor($newColor);
+        $this->worksheet
+            ->getStyle($columns)
+            ->getBorders()
+            ->getOutline()
+            ->setBorderStyle($style)
+            ->setColor($newColor);
 
         return $this;
     }
@@ -211,7 +236,10 @@ class Spreadsheet
      */
     public function addBold(string $columns): Spreadsheet
     {
-        $this->worksheet->getStyle($columns)->getFont()->setBold(true);
+        $this->worksheet
+            ->getStyle($columns)
+            ->getFont()
+            ->setBold(true);
 
         return $this;
     }
@@ -226,7 +254,11 @@ class Spreadsheet
      */
     public function addColor(string $columns, string $color): Spreadsheet
     {
-        $this->worksheet->getStyle($columns)->getFont()->getColor()->setARGB($color);
+        $this->worksheet
+            ->getStyle($columns)
+            ->getFont()
+            ->getColor()
+            ->setARGB($color);
 
         return $this;
     }
@@ -242,62 +274,44 @@ class Spreadsheet
      */
     public function addBackground(string $columns, string $color, string $colorStyle = Fill::FILL_SOLID): Spreadsheet
     {
-		$this->worksheet->getStyle($columns)->getFill()->setFillType($colorStyle)->getStartColor()->setARGB($color);
+        $this->worksheet
+            ->getStyle($columns)
+            ->getFill()
+            ->setFillType($colorStyle)
+            ->getStartColor()
+            ->setARGB($color);
 
         return $this;
-	}
+    }
 
     /**
      * Allows you to control what type of information can be entered into a cell
      * or range of cells. With this feature, you can set rules that limit the
      * allowed values, ensuring that the data entered is correct and consistent
      *
-     * @param array $data<string, string|array<string, int|string>> [
-     * Configuration data list]
+     * @param array{
+     *     columns: array<int, string>,
+     *     config: array{
+     *         error-title: string,
+     *         error-message: string,
+     *         worksheet: string,
+     *         column: string,
+     *         start: string,
+     *         end: string
+     *     }
+     * } $data [Configuration data list]
+     *
+     * @return void
      *
      * @throws Exception [If any of the specified parameters are accessible or
      * incorrect]
      */
     public function addDataValidation(array $data): void
     {
-        if (empty($data)) {
-            throw new Exception('the data configuration is empty', 500);
-        }
-
-        if (empty($data['columns'])) {
-            throw new Exception('the required columns have not been defined', 500);
-        }
-
-        if (empty($data['config'])) {
-            throw new Exception('the required configuration has not been defined', 500);
-        }
-
-        if (empty($data['config']['error-title'])) {
-            throw new Exception('error title not defined', 500);
-        }
-
-        if (empty($data['config']['error-message'])) {
-            throw new Exception('error message not defined', 500);
-        }
-
-        if (empty($data['config']['worksheet'])) {
-            throw new Exception('spreadsheet not defined', 500);
-        }
-
-        if (empty($data['config']['column'])) {
-            throw new Exception('column not defined', 500);
-        }
-
-        if (empty($data['config']['start'])) {
-            throw new Exception('undefined start', 500);
-        }
-
-        if (empty($data['config']['end'])) {
-            throw new Exception('undefined end', 500);
-        }
-
         foreach ($data['columns'] as $column) {
-            $validation = $this->worksheet->getCell($column)->getDataValidation();
+            $validation = $this->worksheet
+                ->getCell($column)
+                ->getDataValidation();
 
             $validation->setType(DataValidation::TYPE_LIST);
 
@@ -317,7 +331,9 @@ class Spreadsheet
 
             $formula = '=' . $data['config']['worksheet'] . '!$' . $data['config']['column'];
 
-            $formula .= '$' . $data['config']['start']. ':$' . $data['config']['column'] . '$' . $data['config']['end'];
+            $formula .= '$' . $data['config']['start'] . ':';
+
+            $formula .= '$' . $data['config']['column'] . '$' . $data['config']['end'];
 
             $validation->setFormula1($formula);
         }
