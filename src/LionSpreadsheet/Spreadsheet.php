@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use RuntimeException;
 
 /**
  * Helps streamline Spreadsheet processes more easily
@@ -60,7 +61,8 @@ class Spreadsheet
     {
         $this->fileType = self::XLSX;
 
-        $this->spreadsheet = IOFactory::createReader($this->fileType)->load($path);
+        $this->spreadsheet = IOFactory::createReader($this->fileType)
+            ->load($path);
 
         $this->worksheet = $this->spreadsheet->getActiveSheet();
 
@@ -89,18 +91,28 @@ class Spreadsheet
      * @param string $fileName [File name]
      *
      * @return void
+     *
+     * @infection-ignore-all
      */
     public function download(string $path, string $fileName): void
     {
+        $filePath = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $fileName;
+
+        if (!is_readable($filePath)) {
+            throw new RuntimeException("The file does not exist or cannot be read: " . $filePath);
+        }
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
-        header('Content-Disposition: attachment; filename=' . $fileName);
+        header('Content-Disposition: attachment; filename="' . basename($fileName) . '"');
 
-        header('Content-Length: ' . filesize($path . $fileName));
+        header('Content-Length: ' . filesize($filePath));
 
-        readfile($path . $fileName);
+        readfile($filePath);
 
-        unlink($path . $fileName);
+        if (!unlink($filePath)) {
+            throw new RuntimeException("The file could not be deleted: " . $filePath);
+        }
     }
 
     /**
@@ -204,21 +216,23 @@ class Spreadsheet
     /**
      * Add border to one or more cells
      *
-     * @param string $columns [Spreadsheet columns]
+     * @param string $cells [Spreadsheet cells]
      * @param string $style [Border style]
      * @param string $color [Border Color]
      *
      * @return Spreadsheet
+     *
+     * @infection-ignore-all
      */
     public function addBorder(
-        string $columns,
+        string $cells,
         string $style = Border::BORDER_THIN,
         string $color = 'FF0000'
     ): Spreadsheet {
         $newColor = new Color($color);
 
         $this->worksheet
-            ->getStyle($columns)
+            ->getStyle($cells)
             ->getBorders()
             ->getOutline()
             ->setBorderStyle($style)

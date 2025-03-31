@@ -532,10 +532,10 @@ trait SpreadsheetProviderTrait
                         'worksheet' => 'Data',
                         'column' => 'D',
                         'start' => 1,
-                        'end' => 10
-                    ]
-                ]
-            ]
+                        'end' => 10,
+                    ],
+                ],
+            ],
         ];
     }
 }
