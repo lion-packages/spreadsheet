@@ -12,6 +12,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet as PhpSpreadsheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test as Testing;
+use PHPUnit\Framework\Attributes\TestWith;
 use ReflectionException;
 use Tests\Provider\SpreadsheetProviderTrait;
 
@@ -82,6 +83,10 @@ class SpreadsheetTest extends Test
     #[Testing]
     public function download(): void
     {
+        if (!function_exists('xdebug_get_headers')) {
+            $this->markTestSkipped('Xdebug is not available');
+        }
+
         $fileName = 'testDownload-' . self::FILE_NAME;
 
         $spreadsheet = new Spreadsheet(self::FILE_PATH);
@@ -94,17 +99,31 @@ class SpreadsheetTest extends Test
 
         $spreadsheet->download(self::SAVE_PATH, $fileName);
 
+        $headers = xdebug_get_headers();
+
         ob_end_clean();
 
         $this->assertFileDoesNotExist(self::SAVE_PATH . $fileName);
+        $this->assertNotEmpty($headers);
+
+        $this->assertContains(
+            'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            $headers
+        );
+
+        $this->assertContains('Content-Disposition: attachment; filename="testDownload-template.xlsx"', $headers);
+        $this->assertContains("Content-Length: 6543", $headers);
     }
 
     /**
      * @throws Exception
      */
     #[Testing]
-    #[DataProvider('changeWorksheetProvider')]
-    public function getSheetName(string $fromSheet, string $toSheet, string $value, string $column): void
+    #[TestWith(['fromSheet' => 'Hoja1'])]
+    #[TestWith(['fromSheet' => 'Hoja1'])]
+    #[TestWith(['fromSheet' => 'Hoja1'])]
+    #[TestWith(['fromSheet' => 'Hoja2'])]
+    public function getSheetName(string $fromSheet): void
     {
         $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $fromSheet);
 
@@ -209,6 +228,7 @@ class SpreadsheetTest extends Test
     }
 
     /**
+     * @throws ReflectionException
      * @throws Exception
      */
     #[Testing]
@@ -336,10 +356,26 @@ class SpreadsheetTest extends Test
         $worksheet = $this->getPrivateProperty(self::WORKSHEET);
 
         foreach ($data['columns'] as $column) {
-            $validation = $worksheet->getCell($column)->getDataValidation();
+            $validation = $worksheet
+                ->getCell($column)
+                ->getDataValidation();
 
             $this->assertSame(DataValidation::TYPE_LIST, $validation->getType());
             $this->assertSame(DataValidation::STYLE_INFORMATION, $validation->getErrorStyle());
+            $this->assertSame(false, $validation->getAllowBlank());
+            $this->assertSame(true, $validation->getShowInputMessage());
+            $this->assertSame(true, $validation->getShowErrorMessage());
+            $this->assertSame(true, $validation->getShowDropDown());
+            $this->assertSame($data['config']['error-title'], $validation->getErrorTitle());
+            $this->assertSame($data['config']['error-message'], $validation->getError());
+
+            $formula = '=' . $data['config']['worksheet'] . '!$' . $data['config']['column'];
+
+            $formula .= '$' . $data['config']['start'] . ':';
+
+            $formula .= '$' . $data['config']['column'] . '$' . $data['config']['end'];
+
+            $this->assertSame($formula, $validation->getFormula1());
         }
 
         $this->assertInstanceOf(Spreadsheet::class, $spreadsheet->changeWorksheet($data['config']['worksheet']));
