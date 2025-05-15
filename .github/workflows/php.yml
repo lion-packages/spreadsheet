@@ -48,6 +48,7 @@ jobs:
           restore-keys: php-composer-lock-${{ runner.os }}-${{ github.run_id }}
 
   composer-validation:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Composer Validation
     needs: install-dependencies
@@ -86,6 +87,7 @@ jobs:
         run: composer dump-autoload --optimize --strict-psr
 
   dependency-review:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Dependency Review
     needs: install-dependencies
@@ -115,6 +117,7 @@ jobs:
           license-check: true
 
   code-analysis-php-stan:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: PHPStan
     needs:
@@ -151,8 +154,9 @@ jobs:
         # run: php -d memory_limit=-1 vendor/bin/phpstan analyse --level max tests
 
   code-analysis-php-codesniffer:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    name: PHP Code Sniffer
+    name: PHPCodeSniffer
     needs:
       - composer-validation
 
@@ -187,6 +191,7 @@ jobs:
         run: php -d memory_limit=-1 vendor/bin/phpcs --standard=PSR12 tests
 
   code-analysis-phplint:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: PHPLint
     needs:
@@ -271,6 +276,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN_LION_SPREADSHEET }}
 
   tests-infection:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     name: Infection
     needs:
