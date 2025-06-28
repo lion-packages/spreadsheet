@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Provider;
 
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 trait SpreadsheetProviderTrait
@@ -315,6 +316,18 @@ trait SpreadsheetProviderTrait
         ];
     }
 
+    /**
+     * @return array{
+     *     sheets: array<int, string>,
+     *     rows: array<int, array{
+     *         group: string,
+     *         cells: array<int, string>,
+     *         value: string,
+     *         color: string,
+     *         fillType: string
+     *     }>
+     * }
+     */
     public static function addBackgroundProvider(): array
     {
         return [
@@ -325,149 +338,149 @@ trait SpreadsheetProviderTrait
                         'group' => 'A1:E1',
                         'cells' => ['A1', 'B1', 'C1', 'D1', 'E1'],
                         'value' => 'VALUE',
-                        'color' => '17FF00',
-                        'fillType' => Fill::FILL_NONE
+                        'color' => Color::COLOR_BLUE,
+                        'fillType' => Fill::FILL_NONE,
                     ],
                     [
                         'group' => 'A3:E3',
                         'cells' => ['A3', 'B3', 'C3', 'D3', 'E3'],
                         'value' => 'VALUE',
-                        'color' => 'FF4200',
-                        'fillType' => Fill::FILL_SOLID
+                        'color' => Color::COLOR_BLUE,
+                        'fillType' => Fill::FILL_SOLID,
                     ],
                     [
                         'group' => 'A5:E5',
                         'cells' => ['A5', 'B5', 'C5', 'D5', 'E5'],
                         'value' => 'VALUE',
-                        'color' => '007CFF',
-                        'fillType' => Fill::FILL_GRADIENT_LINEAR
+                        'color' => Color::COLOR_CYAN,
+                        'fillType' => Fill::FILL_GRADIENT_LINEAR,
                     ],
                     [
                         'group' => 'A7:E7',
                         'cells' => ['A7', 'B7', 'C7', 'D7', 'E7'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_GRADIENT_PATH
+                        'color' => Color::COLOR_BLACK,
+                        'fillType' => Fill::FILL_GRADIENT_PATH,
                     ],
                     [
                         'group' => 'A9:E9',
                         'cells' => ['A9', 'B9', 'C9', 'D9', 'E9'],
                         'value' => 'VALUE',
-                        'color' => '17FF00',
-                        'fillType' => Fill::FILL_PATTERN_DARKDOWN
+                        'color' => Color::COLOR_RED,
+                        'fillType' => Fill::FILL_PATTERN_DARKDOWN,
                     ],
                     [
                         'group' => 'A11:E11',
                         'cells' => ['A11', 'B11', 'C11', 'D11', 'E11'],
                         'value' => 'VALUE',
-                        'color' => 'FF4200',
-                        'fillType' => Fill::FILL_PATTERN_DARKGRAY
+                        'color' => Color::COLOR_YELLOW,
+                        'fillType' => Fill::FILL_PATTERN_DARKGRAY,
                     ],
                     [
                         'group' => 'A13:E13',
                         'cells' => ['A13', 'B13', 'C13', 'D13', 'E13'],
                         'value' => 'VALUE',
-                        'color' => '007CFF',
-                        'fillType' => Fill::FILL_PATTERN_DARKGRID
+                        'color' => Color::COLOR_WHITE,
+                        'fillType' => Fill::FILL_PATTERN_DARKGRID,
                     ],
                     [
                         'group' => 'A15:E15',
                         'cells' => ['A15', 'B15', 'C15', 'D15', 'E15'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_PATTERN_DARKHORIZONTAL
+                        'color' => Color::COLOR_DARKBLUE,
+                        'fillType' => Fill::FILL_PATTERN_DARKHORIZONTAL,
                     ],
                     [
                         'group' => 'A17:E17',
                         'cells' => ['A17', 'B17', 'C17', 'D17', 'E17'],
                         'value' => 'VALUE',
-                        'color' => '17FF00',
-                        'fillType' => Fill::FILL_PATTERN_DARKTRELLIS
+                        'color' => Color::COLOR_DARKGREEN,
+                        'fillType' => Fill::FILL_PATTERN_DARKTRELLIS,
                     ],
                     [
                         'group' => 'A19:E19',
                         'cells' => ['A19', 'B19', 'C19', 'D19', 'E19'],
                         'value' => 'VALUE',
-                        'color' => 'FF4200',
-                        'fillType' => Fill::FILL_PATTERN_DARKUP
+                        'color' => Color::COLOR_DARKRED,
+                        'fillType' => Fill::FILL_PATTERN_DARKUP,
                     ],
                     [
                         'group' => 'A21:E21',
                         'cells' => ['A21', 'B21', 'C21', 'D21', 'E21'],
                         'value' => 'VALUE',
-                        'color' => '007CFF',
-                        'fillType' => Fill::FILL_PATTERN_DARKVERTICAL
+                        'color' => Color::COLOR_DARKYELLOW,
+                        'fillType' => Fill::FILL_PATTERN_DARKVERTICAL,
                     ],
                     [
                         'group' => 'A23:E23',
                         'cells' => ['A23', 'B23', 'C23', 'D23', 'E23'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_PATTERN_GRAY0625
+                        'color' => Color::COLOR_GREEN,
+                        'fillType' => Fill::FILL_PATTERN_GRAY0625,
                     ],
                     [
                         'group' => 'A25:E25',
                         'cells' => ['A25', 'B25', 'C25', 'D25', 'E25'],
                         'value' => 'VALUE',
-                        'color' => '17FF00',
-                        'fillType' => Fill::FILL_PATTERN_GRAY125
+                        'color' => Color::COLOR_MAGENTA,
+                        'fillType' => Fill::FILL_PATTERN_GRAY125,
                     ],
                     [
                         'group' => 'A27:E27',
                         'cells' => ['A27', 'B27', 'C27', 'D27', 'E27'],
                         'value' => 'VALUE',
-                        'color' => 'FF4200',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTDOWN
+                        'color' => Color::COLOR_MAGENTA,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTDOWN,
                     ],
                     [
                         'group' => 'A29:E29',
                         'cells' => ['A29', 'B29', 'C29', 'D29', 'E29'],
                         'value' => 'VALUE',
-                        'color' => '007CFF',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTGRAY
+                        'color' => Color::COLOR_YELLOW,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTGRAY,
                     ],
                     [
                         'group' => 'A31:E31',
                         'cells' => ['A31', 'B31', 'C31', 'D31', 'E31'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTGRID
+                        'color' => Color::COLOR_RED,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTGRID,
                     ],
                     [
                         'group' => 'A33:E33',
                         'cells' => ['A33', 'B33', 'C33', 'D33', 'E33'],
                         'value' => 'VALUE',
-                        'color' => '17FF00',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTHORIZONTAL
+                        'color' => Color::COLOR_BLACK,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTHORIZONTAL,
                     ],
                     [
                         'group' => 'A35:E35',
                         'cells' => ['A35', 'B35', 'C35', 'D35', 'E35'],
                         'value' => 'VALUE',
-                        'color' => 'FF4200',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTTRELLIS
+                        'color' => Color::COLOR_CYAN,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTTRELLIS,
                     ],
                     [
                         'group' => 'A37:E37',
                         'cells' => ['A37', 'B37', 'C37', 'D37', 'E37'],
                         'value' => 'VALUE',
-                        'color' => '007CFF',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTUP
+                        'color' => Color::COLOR_RED,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTUP,
                     ],
                     [
                         'group' => 'A39:E39',
                         'cells' => ['A39', 'B39', 'C39', 'D39', 'E39'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_PATTERN_LIGHTVERTICAL
+                        'color' => Color::COLOR_DARKRED,
+                        'fillType' => Fill::FILL_PATTERN_LIGHTVERTICAL,
                     ],
                     [
                         'group' => 'A41:E41',
                         'cells' => ['A41', 'B41', 'C41', 'D41', 'E41'],
                         'value' => 'VALUE',
-                        'color' => '9B00FF',
-                        'fillType' => Fill::FILL_PATTERN_MEDIUMGRAY
-                    ]
+                        'color' => Color::COLOR_WHITE,
+                        'fillType' => Fill::FILL_PATTERN_MEDIUMGRAY,
+                    ],
                 ]
             ]
         ];

@@ -280,16 +280,18 @@ class Spreadsheet
     /**
      * Add a background color to one or more cells
      *
-     * @param string $columns [Spreadsheet columns]
-     * @param string $color [Background color]
-     * @param string $colorStyle [Color style]
+     * @param string $cells Spreadsheet columns
+     * @param string $color Background color
+     * @param string $colorStyle Color style
      *
      * @return Spreadsheet
+     *
+     * @link https://phpspreadsheet.readthedocs.io/en/latest/topics/recipes/#formatting-cells
      */
-    public function addBackground(string $columns, string $color, string $colorStyle = Fill::FILL_SOLID): Spreadsheet
+    public function addBackground(string $cells, string $color, string $colorStyle = Fill::FILL_SOLID): Spreadsheet
     {
         $this->worksheet
-            ->getStyle($columns)
+            ->getStyle($cells)
             ->getFill()
             ->setFillType($colorStyle)
             ->getStartColor()

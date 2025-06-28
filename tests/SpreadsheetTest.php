@@ -112,7 +112,7 @@ class SpreadsheetTest extends Test
         );
 
         $this->assertContains('Content-Disposition: attachment; filename="testDownload-template.xlsx"', $headers);
-        $this->assertContains("Content-Length: 6543", $headers);
+        $this->assertContains("Content-Length: 6540", $headers);
     }
 
     /**
@@ -302,6 +302,15 @@ class SpreadsheetTest extends Test
     }
 
     /**
+     * @param array<int, string> $sheets
+     * @param array<int, array{
+     *      group: string,
+     *      cells: array<int, string>,
+     *      value: string,
+     *      color: string,
+     *      fillType: string
+     * }> $rows
+     *
      * @throws ReflectionException
      * @throws Exception
      */
@@ -310,6 +319,8 @@ class SpreadsheetTest extends Test
     public function addBackground(array $sheets, array $rows): void
     {
         foreach ($sheets as $sheet) {
+            $fileName = uniqid('testAddBackground-', true);
+
             $spreadsheet = new Spreadsheet(self::FILE_PATH_MULTIPLE_SHEETS, $sheet);
 
             $this->initReflection($spreadsheet);
@@ -320,22 +331,25 @@ class SpreadsheetTest extends Test
                     $this->assertSame($row['value'], $spreadsheet->getCell($cell));
                 }
 
-                $spreadsheet->addBackground($row['group'], $row['color'], $row['fillType']);
+                $this->assertInstanceOf(
+                    Spreadsheet::class,
+                    $spreadsheet->addBackground($row['group'], $row['color'], $row['fillType'])
+                );
 
                 /** @var Worksheet $worksheet */
                 $worksheet = $this->getPrivateProperty(self::WORKSHEET);
 
-                $colorARGB = $worksheet
-                    ->getStyle($row['group'])
-                    ->getFill()
-                    ->setFillType($row['fillType'])
-                    ->getStartColor()
-                    ->getARGB();
+                foreach ($row['cells'] as $cell) {
+                    $colorARGB = $worksheet
+                        ->getStyle($cell)
+                        ->getFill()
+                        ->getFillType();
 
-                $this->assertSame("FF{$row['color']}", $colorARGB);
+                    $this->assertSame($row['fillType'], $colorARGB);
+                }
             }
 
-            $this->saveFile($spreadsheet, uniqid('testAddBackground-', true));
+            $this->saveFile($spreadsheet, $fileName);
         }
     }
 
