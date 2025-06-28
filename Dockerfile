@@ -9,7 +9,7 @@ RUN useradd -m lion && echo 'lion:lion' | chpasswd && usermod -aG sudo lion && u
 
 # Dependencies
 RUN apt-get update -y \
-    && apt-get install -y sudo nano zsh git curl wget unzip cron sendmail golang-go libpng-dev libzip-dev zlib1g-dev \
+    && apt-get install -y sudo nano zsh git curl wget unzip cron golang-go libpng-dev libzip-dev zlib1g-dev \
     && apt-get install -y libonig-dev libevent-dev libssl-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -17,8 +17,7 @@ RUN apt-get update -y \
 # Configure PHP-Extensions
 RUN pecl install xdebug \
     && docker-php-ext-install mbstring gd zip \
-    && docker-php-ext-enable gd zip xdebug \
-    && a2enmod rewrite
+    && docker-php-ext-enable gd zip xdebug
 
 # Configure Xdebug
 RUN echo "xdebug.mode=develop,coverage,debug" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
