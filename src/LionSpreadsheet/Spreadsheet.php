@@ -15,35 +15,33 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use RuntimeException;
 
 /**
- * Helps streamline Spreadsheet processes more easily
- *
- * @package Lion\Spreadsheet
+ * Helps streamline Spreadsheet processes more easily.
  */
 class Spreadsheet
 {
     /**
-     * [Constant to define a spreadsheet with .xlsx extension]
+     * Constant to define a spreadsheet with .xlsx extension.
      *
      * @const XLSX
      */
     public const string XLSX = 'Xlsx';
 
     /**
-     * [Spreadsheet class object]
+     * Spreadsheet class object.
      *
      * @var PHPSpreadsheet $spreadsheet
      */
     private PHPSpreadsheet $spreadsheet;
 
     /**
-     * [Worksheet class object]
+     * Worksheet class object.
      *
      * @var Worksheet $worksheet
      */
     private Worksheet $worksheet;
 
     /**
-     * [File type]
+     * File type.
      *
      * @var string $fileType
      */
@@ -52,10 +50,10 @@ class Spreadsheet
     /**
      * Class constructor
      *
-     * @param string $path [File path]
-     * @param string $sheetName [Sheet name]
+     * @param string $path File path.
+     * @param string $sheetName Sheet name.
      *
-     * @throws Exception [If the worksheet does not exist]
+     * @throws Exception If the worksheet does not exist
      */
     public function __construct(string $path, string $sheetName = '')
     {

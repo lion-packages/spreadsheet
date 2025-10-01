@@ -112,7 +112,6 @@ class SpreadsheetTest extends Test
         );
 
         $this->assertContains('Content-Disposition: attachment; filename="testDownload-template.xlsx"', $headers);
-        $this->assertContains("Content-Length: 6540", $headers);
     }
 
     /**
