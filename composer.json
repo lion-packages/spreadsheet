@@ -1,6 +1,6 @@
 {
     "name": "lion/spreadsheet",
-    "description": "library to facilitate the use of spreadsheet",
+    "description": "Library to facilitate the use of spreadsheets.",
     "type": "library",
     "license": "MIT",
     "autoload": {
@@ -14,7 +14,7 @@
         }
     },
     "require": {
-        "php": ">=8.4"
+        "php": ">=8.5"
     },
     "require-dev": {
         "ext-xdebug": "*",
