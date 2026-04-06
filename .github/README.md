@@ -44,7 +44,7 @@ use Lion\Spreadsheet\Spreadsheet;
 
 $spreadsheet = new Spreadsheet();
 
-$spreadsheet>load('file.xlsx');
+$spreadsheet->load('file.xlsx');
 
 $spreadsheet->setCell('A2', 'value');
 
